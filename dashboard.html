@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Quản lý Tài chính</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+        :root {
+            --primary-color: #0a4d68;
+            --secondary-color: #088395;
+            --light-color: #f4f7f6;
+            --text-color: #333;
+            --white-color: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .charts-container {
+            display: grid;
+            /* Đã CẬP NHẬT: Chỉ còn 1 cột */
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--text-color);
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== THANH BÊN (SIDEBAR) ===== */
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .sidebar-header h3 {
+            font-weight: 700;
+        }
+
+        .sidebar-header i {
+            margin-right: 8px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 0.75rem;
+            color: var(--white-color);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background-color: var(--secondary-color);
+        }
+
+        .sidebar-menu li a i {
+            width: 20px;
+            margin-right: 1rem;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu.bottom {
+            flex-grow: 0;
+        }
+
+        /* ===== NỘI DUNG CHÍNH ===== */
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-profile i {
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Các thẻ tóm tắt */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--white-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .card i {
+            font-size: 2.5rem;
+            padding: 1rem;
+            border-radius: 50%;
+        }
+        .icon-green { color: #2ecc71; background-color: #e9f9f0; }
+        .icon-blue { color: #3498db; background-color: #eaf3f9; }
+        .icon-red { color: #e74c3c; background-color: #fbeeed; }
+
+        .card-info h4 {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-info p {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* ===== PHẦN DỮ LIỆU (CẬP NHẬT) ===== */
+        .data-section {
+            display: grid;
+            grid-template-columns: 1fr; /* Mặc định 1 cột cho di động */
+            gap: 1.5rem;
+        }
+
+        /* Trên màn hình lớn, dùng 2 cột */
+        @media (min-width: 992px) {
+            .data-section {
+                 grid-template-columns: 2fr 1fr; /* Bố cục mới: 2/3 - 1/3 */
+            }
+        }
+
+        .main-column, .side-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* Khoảng cách giữa các widget trong cùng 1 cột */
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Kiểu WIDGET chung */
+        .widget {
+            background-color: var(--white-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .widget h3 {
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        /* Kiểu riêng cho các widget cũ */
+        .chart-placeholder {
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            color: #aaa;
+            font-weight: 500;
+        }
+
+        /* Đã XÓA .chart-placeholder vì giờ dùng canvas thực */
+
+        .recent-transactions table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .recent-transactions th, .recent-transactions td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+        .recent-transactions th {
+            font-size: 0.9rem;
+            color: #888;
+            font-weight: 500;
+        }
+        .recent-transactions td { font-size: 0.95rem; }
+        .recent-transactions .amount {
+            text-align: right;
+            font-weight: 500;
+        }
+        .amount.income { color: #2ecc71; }
+        .amount.expense { color: #e74c3c; }
+
+
+        /* ===== CSS CHO WIDGET MỚI ===== */
+
+        /* === LỊCH (ĐÃ CẬP NHẬT) === */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .calendar-header span {
+            font-weight: 500;
+        }
+        .calendar-header button {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--primary-color);
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+        .calendar-header button:hover {
+            background-color: var(--light-color);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+            text-align: center;
+        }
+
+        .calendar-grid span.day,
+        .calendar-grid span.day-name {
+            padding: 0.25rem;
+            font-size: 0.9rem;
+            border-radius: 50%;
+            display: flex;
+            /* CẬP NHẬT: Cho phép nội dung xếp chồng lên nhau (cho dấu chấm) */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1 / 1; /* Giữ cho các ô ngày luôn vuông */
+            /* CẬP NHẬT: Thêm position relative */
+            position: relative; 
+        }
+        .calendar-grid span.day-name {
+            font-weight: 500;
+            font-size: 0.8rem;
+            color: #888;
+            border-radius: 0;
+            aspect-ratio: auto; /* Tên ngày không cần vuông */
+        }
+        .calendar-grid .day.prev-month,
+        .calendar-grid .day.next-month {
+            color: #ccc;
+        }
+        .calendar-grid .day.today {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            font-weight: 500;
+        }
+        .calendar-grid .day:not(.day-name):not(.prev-month):not(.next-month):hover {
+            background-color: var(--light-color);
+            cursor: pointer;
+        }
+
+        /* === CSS MỚI: Thêm dấu chấm cho lịch === */
+        .calendar-grid .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            /* CẬP NHẬT: Định vị dấu chấm bên dưới số ngày */
+            position: absolute;
+            bottom: 6px; 
+        }
+        .calendar-grid .dot.income {
+            background-color: #2ecc71; /* Màu xanh lá */
+        }
+        .calendar-grid .dot.expense {
+            background-color: #e74c3c; /* Màu đỏ */
+        }
+
+        /* CẬP NHẬT: Đổi màu dấu chấm cho ngày 'today' để dễ thấy */
+        .calendar-grid .day.today .dot {
+            background-color: var(--white-color);
+        }
+
+        /* === QUẢN LÍ CHI TIÊU NHANH === */
+        .quick-expense-widget form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .quick-expense-widget input,
+        .quick-expense-widget select,
+        .quick-expense-widget button {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 0.95rem;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--white-color);
+            outline: none;
+        }
+        .quick-expense-widget input::placeholder {
+            color: #aaa;
+        }
+        .quick-expense-widget input:focus,
+        .quick-expense-widget select:focus {
+            border-color: var(--primary-color);
+        }
+
+
+        /* Kiểu cho select placeholder */
+        .quick-expense-widget select {
+            color: #aaa;
+        }
+        .quick-expense-widget select:focus,
+        .quick-expense-widget select:valid {
+            color: var(--text-color); /* Màu chữ khi đã chọn */
+        }
+        .quick-expense-widget select option {
+            color: var(--text-color);
+        }
+
+        .quick-expense-widget button {
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .quick-expense-widget button:hover {
+            background-color: var(--primary-color);
+        }
+
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 0.5rem;
+            }
+            
+            .sidebar-header { display: none; }
+            .sidebar-menu {
+                display: flex;
+                flex-direction: row;
+                flex-grow: 1;
+            }
+            .sidebar-menu li a {
+                flex-direction: column;
+                padding: 0.75rem 0.5rem;
+                font-size: 0.8rem;
+            }
+            .sidebar-menu li a i {
+                margin-right: 0;
+                margin-bottom: 0.25rem;
+                font-size: 1rem;
+            }
+            .sidebar-menu.bottom { display: none; }
+
+            .main-content { padding: 1rem; }
+            .main-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            /* Đảm bảo cột phụ hiển thị bên dưới cột chính trên di động */
+            .data-section {
+                 grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-wallet"></i> FinanceApp</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fas fa-exchange-alt"></i> Giao dịch</a></li>
+                <li><a href="#"><i class="fas fa-chart-pie"></i> Báo cáo</a></li>
+                <li><a href="#"><i class="fas fa-piggy-bank"></i> Mục tiêu</a></li>
+                <li><a href="#"><i class="fas fa-credit-card"></i> Tài khoản</a></li>
+            </ul>
+            <ul class="sidebar-menu bottom">
+                <li><a href="#"><i class="fas fa-cog"></i> Cài đặt</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <h1>Tổng quan Tài chính</h1>
+                <div class="user-profile">
+                    <i class="fas fa-bell"></i>
+                    <img src="https://i.pravatar.cc/40?img=1" alt="Ảnh người dùng">
+                    <span>Nguyễn Văn A</span>
+                </div>
+            </header>
+
+            <section class="summary-cards">
+                <div class="card">
+                    <i class="fas fa-arrow-up icon-green"></i>
+                    <div class="card-info">
+                        <h4>Tổng Thu nhập (Tháng)</h4>
+                        <p>+ 50.000.000 VNĐ</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <i class="fas fa-arrow-down icon-red"></i>
+                    <div class="card-info">
+                        <h4>Tổng Chi tiêu (Tháng)</h4>
+                        <p>- 12.500.000 VNĐ</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <i class="fas fa-balance-scale-left icon-blue"></i>
+                    <div class="card-info">
+                        <h4>Số dư Ròng</h4>
+                        <p>37.500.000 VNĐ</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <i class="fas fa-money-check-alt icon-blue"></i>
+                    <div class="card-info">
+                        <h4>Tổng Tiết kiệm</h4>
+                        <p>150.000.000 VNĐ</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="data-section">
+                <div class="main-column">
+                    <div class="widget">
+                        <h3>Lưu lượng Thu Chi (6 tháng gần nhất)</h3>
+                        <div style="height: 350px;">
+                            <canvas id="monthlyFlowChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-container">
+                        <div class="widget">
+                            <h3>Phân bổ Chi tiêu (Tháng này)</h3>
+                            <div style="height: 250px;">
+                                <canvas id="expenseDoughnutChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="widget recent-transactions">
+                            <h3>Giao dịch Gần đây</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Mô tả</th>
+                                        <th>Ngày</th>
+                                        <th>Loại</th>
+                                        <th style="text-align: right;">Số tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Lương tháng 10</td>
+                                        <td>20/10/2025</td>
+                                        <td>Thu</td>
+                                        <td class="amount income">50.000.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tiền thuê nhà</td>
+                                        <td>05/10/2025</td>
+                                        <td>Chi</td>
+                                        <td class="amount expense">8.000.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ăn uống</td>
+                                        <td>21/10/2025</td>
+                                        <td>Chi</td>
+                                        <td class="amount expense">500.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Điện nước</td>
+                                        <td>15/10/2025</td>
+                                        <td>Chi</td>
+                                        <td class="amount expense">1.500.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mua sắm online</td>
+                                        <td>18/10/2025</td>
+                                        <td>Chi</td>
+                                        <td class="amount expense">2.500.000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="side-column">
+                    <div class="widget calendar-widget">
+                        <h3>Lịch & Sự kiện</h3>
+                        <div class="calendar-header">
+                            <button><i class="fas fa-chevron-left"></i></button>
+                            <span>Tháng 10, 2025</span>
+                            <button><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="calendar-grid">
+                            <span class="day-name">T2</span>
+                            <span class="day-name">T3</span>
+                            <span class="day-name">T4</span>
+                            <span class="day-name">T5</span>
+                            <span class="day-name">T6</span>
+                            <span class="day-name">T7</span>
+                            <span class="day-name">CN</span>
+                            <span class="day prev-month">29</span>
+                            <span class="day prev-month">30</span>
+                            <span class="day">1</span>
+                            <span class="day">2</span>
+                            <span class="day">3</span>
+                            <span class="day">4</span>
+                            <span class="day">5<span class="dot expense"></span></span>
+                            <span class="day">6</span>
+                            <span class="day">7</span>
+                            <span class="day">8</span>
+                            <span class="day">9</span>
+                            <span class="day">10</span>
+                            <span class="day">11</span>
+                            <span class="day">12</span>
+                            <span class="day">13</span>
+                            <span class="day">14</span>
+                            <span class="day">15<span class="dot expense"></span></span>
+                            <span class="day">16</span>
+                            <span class="day">17</span>
+                            <span class="day">18<span class="dot expense"></span></span>
+                            <span class="day">19</span>
+                            <span class="day today">20<span class="dot income"></span></span>
+                            <span class="day">21<span class="dot expense"></span></span>
+                            <span class="day">22</span>
+                            <span class="day">23</span>
+                            <span class="day">24</span>
+                            <span class="day">25</span>
+                            <span class="day">26</span>
+                            <span class="day">27</span>
+                            <span class="day">28</span>
+                            <span class="day">29</span>
+                            <span class="day">30</span>
+                            <span class="day">31</span>
+                            <span class="day next-month">1</span>
+                            <span class="day next-month">2</span>
+                        </div>
+                    </div>
+
+                    <div class="widget quick-expense-widget">
+                        <h3>Thêm Giao dịch Nhanh</h3>
+                        <form>
+                            <input type="number" placeholder="Số tiền (VNĐ)" required>
+                            <input type="text" placeholder="Mô tả (vd: Cà phê sáng)">
+                            <select required>
+                                <option value="" disabled selected>Chọn Loại giao dịch</option>
+                                <option value="expense">Chi tiêu</option>
+                                <option value="income">Thu nhập</option>
+                            </select>
+                            <select required>
+                                <option value="" disabled selected>Chọn Danh mục</option>
+                                <option value="food">Ăn uống</option>
+                                <option value="rent">Nhà ở</option>
+                                <option value="salary">Lương</option>
+                                <option value="transport">Di chuyển</option>
+                                <option value="other">Khác</option>
+                            </select>
+                            <button type="submit">Thêm Giao dịch</button>
+                        </form>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Dữ liệu giả lập
+        const monthlyData = {
+            labels: ['T5/25', 'T6/25', 'T7/25', 'T8/25', 'T9/25', 'T10/25'],
+            datasets: [
+                {
+                    label: 'Thu nhập',
+                    data: [45, 52, 60, 55, 65, 50],
+                    backgroundColor: '#2ecc71', // Xanh lá
+                    stack: 'Stack 0',
+                },
+                {
+                    label: 'Chi tiêu',
+                    data: [-15, -18, -20, -17, -25, -12.5],
+                    backgroundColor: '#e74c3c', // Đỏ
+                    stack: 'Stack 0',
+                }
+            ]
+        };
+
+        const expenseDoughnutData = {
+            labels: ['Nhà ở (Thuê)', 'Ăn uống', 'Mua sắm', 'Di chuyển', 'Khác'],
+            datasets: [{
+                data: [8, 3.5, 2.5, 1.5, 1.0], // Đơn vị: Triệu VNĐ
+                backgroundColor: [
+                    '#3498db', // Xanh dương
+                    '#f1c40f', // Vàng
+                    '#9b59b6', // Tím
+                    '#e67e22', // Cam
+                    '#7f8c8d'  // Xám
+                ],
+                hoverOffset: 4
+            }]
+        };
+
+        // Biểu đồ Thu Chi Hàng tháng (Biểu đồ thanh)
+        const monthlyFlowCtx = document.getElementById('monthlyFlowChart').getContext('2d');
+        new Chart(monthlyFlowCtx, {
+            type: 'bar',
+            data: monthlyData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: false,
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(Math.abs(context.parsed.y * 1000000));
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Triệu VNĐ'
+                        },
+                        ticks: {
+                            callback: function(value, index, ticks) {
+                                return value + ' Tr';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Biểu đồ Phân bổ Chi tiêu (Biểu đồ tròn)
+        const expenseDoughnutCtx = document.getElementById('expenseDoughnutChart').getContext('2d');
+        new Chart(expenseDoughnutCtx, {
+            type: 'doughnut',
+            data: expenseDoughnutData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '60%', // Tạo hình bánh donut
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    title: {
+                        display: false,
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', minimumFractionDigits: 0 }).format(context.parsed * 1000000);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
