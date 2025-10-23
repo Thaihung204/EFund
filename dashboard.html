@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,13 +11,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
         :root {
-            --primary-color: #0a4d68;
-            --secondary-color: #088395;
+            --primary-color: #f06735;
+            --secondary-color: #62cc67;
             --light-color: #f4f7f6;
             --text-color: #333;
             --white-color: #ffffff;
             --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
+
         .charts-container {
             display: grid;
             /* Đã CẬP NHẬT: Chỉ còn 1 cột */
@@ -50,6 +52,7 @@
             flex-direction: column;
             padding: 1.5rem 1rem;
             transition: all 0.3s ease;
+          
         }
 
         .sidebar-header {
@@ -152,9 +155,21 @@
             padding: 1rem;
             border-radius: 50%;
         }
-        .icon-green { color: #2ecc71; background-color: #e9f9f0; }
-        .icon-blue { color: #3498db; background-color: #eaf3f9; }
-        .icon-red { color: #e74c3c; background-color: #fbeeed; }
+
+        .icon-green {
+            color: #2ecc71;
+            background-color: #e9f9f0;
+        }
+
+        .icon-blue {
+            color: #3498db;
+            background-color: #eaf3f9;
+        }
+
+        .icon-red {
+            color: #e74c3c;
+            background-color: #fbeeed;
+        }
 
         .card-info h4 {
             font-size: 0.9rem;
@@ -170,21 +185,25 @@
         /* ===== PHẦN DỮ LIỆU (CẬP NHẬT) ===== */
         .data-section {
             display: grid;
-            grid-template-columns: 1fr; /* Mặc định 1 cột cho di động */
+            grid-template-columns: 1fr;
+            /* Mặc định 1 cột cho di động */
             gap: 1.5rem;
         }
 
         /* Trên màn hình lớn, dùng 2 cột */
         @media (min-width: 992px) {
             .data-section {
-                 grid-template-columns: 2fr 1fr; /* Bố cục mới: 2/3 - 1/3 */
+                grid-template-columns: 2fr 1fr;
+                /* Bố cục mới: 2/3 - 1/3 */
             }
         }
 
-        .main-column, .side-column {
+        .main-column,
+        .side-column {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem; /* Khoảng cách giữa các widget trong cùng 1 cột */
+            gap: 1.5rem;
+            /* Khoảng cách giữa các widget trong cùng 1 cột */
         }
 
         .charts-container {
@@ -225,23 +244,35 @@
             border-collapse: collapse;
         }
 
-        .recent-transactions th, .recent-transactions td {
+        .recent-transactions th,
+        .recent-transactions td {
             padding: 0.75rem 0.5rem;
             border-bottom: 1px solid #eee;
             text-align: left;
         }
+
         .recent-transactions th {
             font-size: 0.9rem;
             color: #888;
             font-weight: 500;
         }
-        .recent-transactions td { font-size: 0.95rem; }
+
+        .recent-transactions td {
+            font-size: 0.95rem;
+        }
+
         .recent-transactions .amount {
             text-align: right;
             font-weight: 500;
         }
-        .amount.income { color: #2ecc71; }
-        .amount.expense { color: #e74c3c; }
+
+        .amount.income {
+            color: #2ecc71;
+        }
+
+        .amount.expense {
+            color: #e74c3c;
+        }
 
 
         /* ===== CSS CHO WIDGET MỚI ===== */
@@ -253,9 +284,11 @@
             align-items: center;
             margin-bottom: 1rem;
         }
+
         .calendar-header span {
             font-weight: 500;
         }
+
         .calendar-header button {
             background: none;
             border: none;
@@ -265,6 +298,7 @@
             padding: 0.25rem;
             border-radius: 4px;
         }
+
         .calendar-header button:hover {
             background-color: var(--light-color);
         }
@@ -286,50 +320,121 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 1 / 1; /* Giữ cho các ô ngày luôn vuông */
+            aspect-ratio: 1 / 1;
+            /* Giữ cho các ô ngày luôn vuông */
             /* CẬP NHẬT: Thêm position relative */
-            position: relative; 
+            position: relative;
         }
+
         .calendar-grid span.day-name {
             font-weight: 500;
             font-size: 0.8rem;
             color: #888;
             border-radius: 0;
-            aspect-ratio: auto; /* Tên ngày không cần vuông */
+            aspect-ratio: auto;
+            /* Tên ngày không cần vuông */
         }
+
         .calendar-grid .day.prev-month,
         .calendar-grid .day.next-month {
             color: #ccc;
         }
+
         .calendar-grid .day.today {
             background-color: var(--primary-color);
             color: var(--white-color);
             font-weight: 500;
         }
+
         .calendar-grid .day:not(.day-name):not(.prev-month):not(.next-month):hover {
             background-color: var(--light-color);
             cursor: pointer;
         }
 
-        /* === CSS MỚI: Thêm dấu chấm cho lịch === */
-        .calendar-grid .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            /* CẬP NHẬT: Định vị dấu chấm bên dưới số ngày */
-            position: absolute;
-            bottom: 6px; 
-        }
-        .calendar-grid .dot.income {
-            background-color: #2ecc71; /* Màu xanh lá */
-        }
-        .calendar-grid .dot.expense {
-            background-color: #e74c3c; /* Màu đỏ */
+        /* Loại bỏ .dot cũ và thêm hiển thị số tiền */
+        .calendar-grid .day {
+            position: relative;
+            aspect-ratio: 1 / 1.5;
+            /* CẬP NHẬT: Cho phép chiều cao lớn hơn để chứa số tiền */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            /* Sắp xếp nội dung lên trên */
+            padding-top: 5px;
+            /* Thêm padding trên */
+            font-size: 0.9rem;
+            border-radius: 8px;
+            /* Đổi thành hình vuông hơn */
+            cursor: pointer;
         }
 
-        /* CẬP NHẬT: Đổi màu dấu chấm cho ngày 'today' để dễ thấy */
-        .calendar-grid .day.today .dot {
-            background-color: var(--white-color);
+        .calendar-grid .day.today {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        /* Kiểu cho số ngày */
+        .calendar-grid .day>span.date-number {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        /* Đảm bảo số ngày hôm nay vẫn được làm tròn */
+        .calendar-grid .day.today>span.date-number {
+            /* Tạo hình tròn cho số ngày hôm nay */
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+            /* Tăng khoảng cách với số tiền */
+        }
+
+
+        /* Thêm số tiền và biểu tượng */
+        .calendar-grid .financial-summary {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.65rem;
+            /* Rất nhỏ để phù hợp */
+            line-height: 1;
+            text-align: center;
+        }
+
+        .calendar-grid .financial-summary .income-amount {
+            color: #2ecc71;
+            /* Xanh lá */
+            font-weight: 500;
+        }
+
+        .calendar-grid .financial-summary .expense-amount {
+            color: #e74c3c;
+            /* Đỏ */
+            font-weight: 500;
+        }
+
+        /* Đổi màu số tiền cho ngày hôm nay (today) để dễ đọc */
+        .calendar-grid .day.today .financial-summary .income-amount,
+        .calendar-grid .day.today .financial-summary .expense-amount {
+            color: var(--white-color);
+            opacity: 0.8;
+        }
+
+        /* Ẩn dấu chấm cũ */
+        .calendar-grid .dot {
+            display: none !important;
+        }
+
+        /* Cập nhật day-name để phù hợp với chiều cao mới */
+        .calendar-grid span.day-name {
+            aspect-ratio: auto;
+            padding: 0.25rem 0;
         }
 
         /* === QUẢN LÍ CHI TIÊU NHANH === */
@@ -338,6 +443,7 @@
             flex-direction: column;
             gap: 0.75rem;
         }
+
         .quick-expense-widget input,
         .quick-expense-widget select,
         .quick-expense-widget button {
@@ -350,9 +456,11 @@
             background-color: var(--white-color);
             outline: none;
         }
+
         .quick-expense-widget input::placeholder {
             color: #aaa;
         }
+
         .quick-expense-widget input:focus,
         .quick-expense-widget select:focus {
             border-color: var(--primary-color);
@@ -363,10 +471,13 @@
         .quick-expense-widget select {
             color: #aaa;
         }
+
         .quick-expense-widget select:focus,
         .quick-expense-widget select:valid {
-            color: var(--text-color); /* Màu chữ khi đã chọn */
+            color: var(--text-color);
+            /* Màu chữ khi đã chọn */
         }
+
         .quick-expense-widget select option {
             color: var(--text-color);
         }
@@ -379,6 +490,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         .quick-expense-widget button:hover {
             background-color: var(--primary-color);
         }
@@ -397,26 +509,37 @@
                 overflow-x: auto;
                 padding: 0.5rem;
             }
-            
-            .sidebar-header { display: none; }
+
+            .sidebar-header {
+                display: none;
+            }
+
             .sidebar-menu {
                 display: flex;
                 flex-direction: row;
                 flex-grow: 1;
             }
+
             .sidebar-menu li a {
                 flex-direction: column;
                 padding: 0.75rem 0.5rem;
                 font-size: 0.8rem;
             }
+
             .sidebar-menu li a i {
                 margin-right: 0;
                 margin-bottom: 0.25rem;
                 font-size: 1rem;
             }
-            .sidebar-menu.bottom { display: none; }
 
-            .main-content { padding: 1rem; }
+            .sidebar-menu.bottom {
+                display: none;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
             .main-header {
                 flex-direction: column;
                 align-items: flex-start;
@@ -425,11 +548,12 @@
 
             /* Đảm bảo cột phụ hiển thị bên dưới cột chính trên di động */
             .data-section {
-                 grid-template-columns: 1fr;
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
 
     <div class="dashboard-container">
@@ -489,7 +613,7 @@
                     </div>
                 </div>
             </section>
-            
+
             <section class="data-section">
                 <div class="main-column">
                     <div class="widget">
@@ -498,7 +622,7 @@
                             <canvas id="monthlyFlowChart"></canvas>
                         </div>
                     </div>
-                    
+
                     <div class="charts-container">
                         <div class="widget">
                             <h3>Phân bổ Chi tiêu (Tháng này)</h3>
@@ -574,37 +698,114 @@
                             <span class="day-name">CN</span>
                             <span class="day prev-month">29</span>
                             <span class="day prev-month">30</span>
-                            <span class="day">1</span>
-                            <span class="day">2</span>
-                            <span class="day">3</span>
-                            <span class="day">4</span>
-                            <span class="day">5<span class="dot expense"></span></span>
-                            <span class="day">6</span>
-                            <span class="day">7</span>
-                            <span class="day">8</span>
-                            <span class="day">9</span>
-                            <span class="day">10</span>
-                            <span class="day">11</span>
-                            <span class="day">12</span>
-                            <span class="day">13</span>
-                            <span class="day">14</span>
-                            <span class="day">15<span class="dot expense"></span></span>
-                            <span class="day">16</span>
-                            <span class="day">17</span>
-                            <span class="day">18<span class="dot expense"></span></span>
-                            <span class="day">19</span>
-                            <span class="day today">20<span class="dot income"></span></span>
-                            <span class="day">21<span class="dot expense"></span></span>
-                            <span class="day">22</span>
-                            <span class="day">23</span>
-                            <span class="day">24</span>
-                            <span class="day">25</span>
-                            <span class="day">26</span>
-                            <span class="day">27</span>
-                            <span class="day">28</span>
-                            <span class="day">29</span>
-                            <span class="day">30</span>
-                            <span class="day">31</span>
+                            <span class="day">
+                                <span class="date-number">1</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">2</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">3</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">4</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">5</span>
+                                <div class="financial-summary">
+                                    <span class="expense-amount"><i class="fas fa-arrow-down"></i> 8 Tr</span>
+                                </div>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">6</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">7</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">8</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">9</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">10</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">11</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">12</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">13</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">14</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">15</span>
+                                <div class="financial-summary">
+                                    <span class="expense-amount"><i class="fas fa-arrow-down"></i> 1.5 Tr</span>
+                                </div>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">16</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">17</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">18</span>
+                                <div class="financial-summary">
+                                    <span class="income-amount"><i class="fas fa-arrow-up"></i> 2.5 Tr</span>
+                                </div>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">19</span>
+                            </span>
+                            <span class="day today">
+                                <span class="date-number">20</span>
+                                <div class="financial-summary">
+                                    <span class="income-amount"><i class="fas fa-arrow-up"></i> 50 Tr</span>
+                                </div>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">21</span>
+                                <div class="financial-summary">
+                                    <span class="expense-amount"><i class="fas fa-arrow-down"></i> 500 K</span>
+                                </div>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">22</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">23</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">24</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">25</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">26</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">27</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">28</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">29</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">30</span>
+                            </span>
+                            <span class="day">
+                                <span class="date-number">31</span>
+                            </span>
                             <span class="day next-month">1</span>
                             <span class="day next-month">2</span>
                         </div>
@@ -686,7 +887,7 @@
                     },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 let label = context.dataset.label || '';
                                 if (label) {
                                     label += ': ';
@@ -710,7 +911,7 @@
                             text: 'Triệu VNĐ'
                         },
                         ticks: {
-                            callback: function(value, index, ticks) {
+                            callback: function (value, index, ticks) {
                                 return value + ' Tr';
                             }
                         }
@@ -737,7 +938,7 @@
                     },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 let label = context.label || '';
                                 if (label) {
                                     label += ': ';
@@ -754,4 +955,5 @@
         });
     </script>
 </body>
+
 </html>
