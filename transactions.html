@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giao Dịch - FinanceApp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<style>
+/* Modern Transactions Page Styles */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    --income-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --expense-gradient: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+    
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #ffd3a5 0%, #fd9853 100%);
+    min-height: 100vh;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+#sidebar-container {
+    width: 280px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255,255,255,0.2);
+    padding: 2rem 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 2rem;
+    background: transparent;
+}
+
+
+/* Transactions Section */
+.transactions-section {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Page Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btn-add-transaction {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-add-transaction:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Filters Section */
+.filters-section {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    background: rgba(255,255,255,0.8);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: white;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.btn-filter {
+    background: var(--secondary-gradient);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-filter:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-reset {
+    background: rgba(255,255,255,0.8);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-reset:hover {
+    background: var(--border-color);
+}
+
+/* Summary Cards */
+.transactions-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.summary-card:hover::before {
+    transform: scaleX(1);
+}
+
+.summary-card.income::before {
+    background: var(--income-gradient);
+    transform: scaleX(1);
+}
+
+.summary-card.expense::before {
+    background: var(--expense-gradient);
+    transform: scaleX(1);
+}
+
+.summary-card.balance::before {
+    background: var(--primary-gradient);
+    transform: scaleX(1);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.card-icon.income {
+    background: var(--income-gradient);
+}
+
+.card-icon.expense {
+    background: var(--expense-gradient);
+}
+
+.card-icon.balance {
+    background: var(--primary-gradient);
+}
+
+.card-content {
+    flex: 1;
+}
+
+.card-content h3 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-content .amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+}
+
+.card-content .change {
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.change.positive {
+    color: #10b981;
+}
+
+.change.negative {
+    color: #ef4444;
+}
+
+/* Transactions Table */
+.transactions-table-container {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255,255,255,0.2);
+    margin-bottom: 2rem;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-export {
+    background: var(--success-gradient);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-export:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.transactions-table {
+    overflow-x: auto;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.transactions-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: white;
+}
+
+.transactions-table th,
+.transactions-table td {
+    padding: 1rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.transactions-table th {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(102, 126, 234, 0.05);
+    position: sticky;
+    top: 0;
+}
+
+.transactions-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.transactions-table tbody tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+    transform: scale(1.01);
+}
+
+.transactions-table td {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.transaction-type {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.type-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    color: white;
+}
+
+.type-icon.income {
+    background: var(--income-gradient);
+}
+
+.type-icon.expense {
+    background: var(--expense-gradient);
+}
+
+.type-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.type-badge.income {
+    background: var(--income-gradient);
+}
+
+.type-badge.expense {
+    background: var(--expense-gradient);
+}
+
+.amount.income {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.amount.expense {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.category-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+/* Transaction Actions */
+.transaction-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.btn-edit:hover {
+    background: #3b82f6;
+    color: white;
+    transform: scale(1.1);
+}
+
+.btn-delete {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.btn-delete:hover {
+    background: #ef4444;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Charts Section */
+.charts-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.chart-container {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+    box-shadow: var(--shadow-xl);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.chart-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-wrapper {
+    height: 300px;
+    position: relative;
+}
+
+/* Add Transaction Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 600px;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid rgba(255,255,255,0.2);
+    animation: slideUp 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-close {
+    border: none;
+    background: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    background: rgba(255,255,255,0.8);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: white;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.transaction-type-toggle {
+    display: flex;
+    background: rgba(255,255,255,0.8);
+    border-radius: var(--radius-sm);
+    padding: 0.25rem;
+    border: 1px solid var(--border-color);
+}
+
+.type-toggle-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.type-toggle-btn.active {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.type-toggle-btn.income.active {
+    background: var(--income-gradient);
+}
+
+.type-toggle-btn.expense.active {
+    background: var(--expense-gradient);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-cancel {
+    background: rgba(255,255,255,0.8);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: var(--border-color);
+}
+
+.btn-save {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.summary-card,
+.chart-container {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .transactions-summary {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    #sidebar-container {
+        width: 100%;
+        position: relative;
+        height: auto;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .page-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-actions {
+        justify-content: stretch;
+    }
+    
+    .transactions-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar (Cố định) -->
+        <div id="sidebar-container"></div>
+
+        <!-- Main Content (Cuộn được) -->
+        <main class="main-content">
+            <!-- Transactions Content -->
+            <section class="transactions-section">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1><i class="fas fa-exchange-alt"></i> Giao Dịch</h1>
+                    <button class="btn-add-transaction" id="add-transaction-btn">
+                        <i class="fas fa-plus"></i> 💰 Thêm Giao Dịch
+                    </button>
+                </div>
+
+                <!-- Filters Section -->
+                <div class="filters-section">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="type-filter">🏷️ Loại giao dịch</label>
+                            <select id="type-filter">
+                                <option value="all">Tất cả</option>
+                                <option value="income">💰 Thu nhập</option>
+                                <option value="expense">💸 Chi tiêu</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="category-filter">📂 Danh mục</label>
+                            <select id="category-filter">
+                                <option value="all">Tất cả danh mục</option>
+                                <option value="food">🍽️ Ăn uống</option>
+                                <option value="transport">🚗 Giao thông</option>
+                                <option value="entertainment">🎬 Giải trí</option>
+                                <option value="shopping">🛍️ Mua sắm</option>
+                                <option value="bills">📄 Hóa đơn</option>
+                                <option value="salary">💼 Lương</option>
+                                <option value="bonus">🎁 Thưởng</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="date-from">📅 Từ ngày</label>
+                            <input type="date" id="date-from">
+                        </div>
+                        <div class="filter-group">
+                            <label for="date-to">📅 Đến ngày</label>
+                            <input type="date" id="date-to">
+                        </div>
+                        <div class="filter-group">
+                            <label for="amount-filter">💰 Số tiền</label>
+                            <select id="amount-filter">
+                                <option value="all">Tất cả</option>
+                                <option value="0-100000">Dưới 100k</option>
+                                <option value="100000-500000">100k - 500k</option>
+                                <option value="500000-1000000">500k - 1M</option>
+                                <option value="1000000+">Trên 1M</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-reset" id="reset-filters">
+                            <i class="fas fa-undo"></i> 🔄 Đặt lại
+                        </button>
+                        <button class="btn-filter" id="apply-filters">
+                            <i class="fas fa-filter"></i> 🔍 Lọc
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="transactions-summary">
+                    <div class="summary-card income">
+                        <div class="card-icon income">
+                            <i class="fas fa-arrow-trend-up"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Tổng Thu Nhập</h3>
+                            <p class="amount">15.500.000 VNĐ</p>
+                            <span class="change positive">
+                                <i class="fas fa-arrow-up"></i> +12.5%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="summary-card expense">
+                        <div class="card-icon expense">
+                            <i class="fas fa-arrow-trend-down"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Tổng Chi Tiêu</h3>
+                            <p class="amount">8.200.000 VNĐ</p>
+                            <span class="change negative">
+                                <i class="fas fa-arrow-down"></i> -5.2%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="summary-card balance">
+                        <div class="card-icon balance">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Số Dư Ròng</h3>
+                            <p class="amount">7.300.000 VNĐ</p>
+                            <span class="change positive">
+                                <i class="fas fa-arrow-up"></i> +18.7%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-pie"></i> Phân Bổ Chi Tiêu</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="expense-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-line"></i> Xu Hướng Giao Dịch</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="trend-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Table -->
+                <div class="transactions-table-container">
+                    <div class="table-header">
+                        <h3><i class="fas fa-list"></i> Danh Sách Giao Dịch</h3>
+                        <div class="table-actions">
+                            <button class="btn-export" id="export-btn">
+                                <i class="fas fa-download"></i> 📊 Xuất Excel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="transactions-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>📅 Ngày</th>
+                                    <th>📝 Mô tả</th>
+                                    <th>🏷️ Loại</th>
+                                    <th>📂 Danh mục</th>
+                                    <th>💰 Số tiền</th>
+                                    <th>⚙️ Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-list">
+                                <tr>
+                                    <td>15/12/2024</td>
+                                    <td>
+                                        <div class="transaction-type">
+                                            <div class="type-icon income">
+                                                <i class="fas fa-arrow-up"></i>
+                                            </div>
+                                            <span>Lương tháng 12</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="type-badge income">💰 Thu</span></td>
+                                    <td><span class="category-badge">💼 Lương</span></td>
+                                    <td class="amount income">+15.000.000 VNĐ</td>
+                                    <td>
+                                        <div class="transaction-actions">
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn-action btn-delete" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>14/12/2024</td>
+                                    <td>
+                                        <div class="transaction-type">
+                                            <div class="type-icon expense">
+                                                <i class="fas fa-arrow-down"></i>
+                                            </div>
+                                            <span>Ăn trưa</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="type-badge expense">💸 Chi</span></td>
+                                    <td><span class="category-badge">🍽️ Ăn uống</span></td>
+                                    <td class="amount expense">-85.000 VNĐ</td>
+                                    <td>
+                                        <div class="transaction-actions">
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn-action btn-delete" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>13/12/2024</td>
+                                    <td>
+                                        <div class="transaction-type">
+                                            <div class="type-icon expense">
+                                                <i class="fas fa-arrow-down"></i>
+                                            </div>
+                                            <span>Xăng xe</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="type-badge expense">💸 Chi</span></td>
+                                    <td><span class="category-badge">🚗 Giao thông</span></td>
+                                    <td class="amount expense">-200.000 VNĐ</td>
+                                    <td>
+                                        <div class="transaction-actions">
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn-action btn-delete" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>12/12/2024</td>
+                                    <td>
+                                        <div class="transaction-type">
+                                            <div class="type-icon expense">
+                                                <i class="fas fa-arrow-down"></i>
+                                            </div>
+                                            <span>Mua sắm online</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="type-badge expense">💸 Chi</span></td>
+                                    <td><span class="category-badge">🛍️ Mua sắm</span></td>
+                                    <td class="amount expense">-1.500.000 VNĐ</td>
+                                    <td>
+                                        <div class="transaction-actions">
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn-action btn-delete" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>11/12/2024</td>
+                                    <td>
+                                        <div class="transaction-type">
+                                            <div class="type-icon income">
+                                                <i class="fas fa-arrow-up"></i>
+                                            </div>
+                                            <span>Tiền thưởng</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="type-badge income">💰 Thu</span></td>
+                                    <td><span class="category-badge">🎁 Thưởng</span></td>
+                                    <td class="amount income">+500.000 VNĐ</td>
+                                    <td>
+                                        <div class="transaction-actions">
+                                            <button class="btn-action btn-edit" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn-action btn-delete" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div class="modal" id="add-transaction-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i> Thêm Giao Dịch Mới</h3>
+                <button class="modal-close" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="add-transaction-form">
+                    <div class="form-group full-width">
+                        <label>🏷️ Loại giao dịch</label>
+                        <div class="transaction-type-toggle">
+                            <button type="button" class="type-toggle-btn income active" data-type="income">
+                                <i class="fas fa-arrow-up"></i> 💰 Thu nhập
+                            </button>
+                            <button type="button" class="type-toggle-btn expense" data-type="expense">
+                                <i class="fas fa-arrow-down"></i> 💸 Chi tiêu
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="transaction-amount">💰 Số tiền (VNĐ)</label>
+                            <input type="number" id="transaction-amount" placeholder="Nhập số tiền" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="transaction-date">📅 Ngày giao dịch</label>
+                            <input type="date" id="transaction-date" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transaction-description">📝 Mô tả</label>
+                        <input type="text" id="transaction-description" placeholder="Mô tả giao dịch" required>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="transaction-category">📂 Danh mục</label>
+                            <select id="transaction-category" required>
+                                <option value="">Chọn danh mục</option>
+                                <optgroup label="💰 Thu nhập">
+                                    <option value="salary">💼 Lương</option>
+                                    <option value="bonus">🎁 Thưởng</option>
+                                    <option value="investment">📈 Đầu tư</option>
+                                    <option value="other-income">💵 Khác</option>
+                                </optgroup>
+                                <optgroup label="💸 Chi tiêu">
+                                    <option value="food">🍽️ Ăn uống</option>
+                                    <option value="transport">🚗 Giao thông</option>
+                                    <option value="entertainment">🎬 Giải trí</option>
+                                    <option value="shopping">🛍️ Mua sắm</option>
+                                    <option value="bills">📄 Hóa đơn</option>
+                                    <option value="healthcare">🏥 Y tế</option>
+                                    <option value="education">🎓 Giáo dục</option>
+                                    <option value="other-expense">💸 Khác</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="transaction-account">🏦 Tài khoản</label>
+                            <select id="transaction-account" required>
+                                <option value="cash">💵 Tiền mặt</option>
+                                <option value="bank">🏦 Ngân hàng</option>
+                                <option value="credit">💳 Thẻ tín dụng</option>
+                                <option value="savings">💰 Tiết kiệm</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="transaction-note">📄 Ghi chú</label>
+                        <textarea id="transaction-note" placeholder="Ghi chú thêm (tùy chọn)" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancel-transaction">❌ Hủy</button>
+                <button class="btn-save" id="save-transaction">💾 Lưu Giao Dịch</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Components -->
+    <script src="js/load-components.js"></script>
+    <script src="js/transactions.js"></script>
+</body>
+
+</html>
