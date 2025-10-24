@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mục Tiêu Tiết Kiệm - FinanceApp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<style>
+/* Modern Savings Page Styles */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    --savings-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #ffd3a5 0%, #fd9853 100%);
+    min-height: 100vh;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+#sidebar-container {
+    width: 280px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255,255,255,0.2);
+    padding: 2rem 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 2rem;
+    background: transparent;
+}
+
+
+/* Savings Section */
+.savings-section {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Savings Overview */
+.savings-overview {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.savings-overview::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--savings-gradient);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.savings-overview h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: var(--savings-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.overview-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.8);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--savings-gradient);
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-content h3 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Goals Section */
+.savings-goals {
+    margin-bottom: 2rem;
+}
+
+.goals-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.goals-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btn-add-goal {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-add-goal:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Goals Grid */
+.goals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.goal-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.goal-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.goal-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.goal-card:hover::before {
+    transform: scaleX(1);
+}
+
+.goal-card.completed::before {
+    background: var(--success-gradient);
+    transform: scaleX(1);
+}
+
+.goal-card.in-progress::before {
+    background: var(--warning-gradient);
+    transform: scaleX(1);
+}
+
+.goal-header {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.goal-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-gradient);
+    color: white;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.goal-card.completed .goal-icon {
+    background: var(--success-gradient);
+}
+
+.goal-card.in-progress .goal-icon {
+    background: var(--warning-gradient);
+}
+
+.goal-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.goal-info h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.goal-info .goal-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.goal-status {
+    flex-shrink: 0;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow-sm);
+}
+
+.status-badge.completed {
+    background: var(--success-gradient);
+}
+
+.status-badge.in-progress {
+    background: var(--warning-gradient);
+}
+
+/* Progress Section */
+.goal-progress {
+    margin: 1rem 0;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+}
+
+.current-amount {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.target-amount {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 9999px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary-gradient);
+    border-radius: 9999px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.goal-card.completed .progress-fill {
+    background: var(--success-gradient);
+}
+
+.goal-card.in-progress .progress-fill {
+    background: var(--warning-gradient);
+}
+
+.progress-percentage {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+.goal-timeline {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+
+.goal-timeline i {
+    color: var(--text-muted);
+}
+
+/* Goal Actions */
+.goal-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.btn-add-money, .btn-edit-goal {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    background: rgba(255,255,255,0.8);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-add-money:hover, .btn-edit-goal:hover {
+    background: var(--primary-gradient);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Savings Calculator */
+.savings-calculator {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.calculator-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.calculator-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.calculator-header p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.calculator-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.calculator-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-group input {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    background: rgba(255,255,255,0.8);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: white;
+}
+
+.btn-calculate {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-calculate:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.calculator-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.result-card {
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    transition: all 0.3s ease;
+}
+
+.result-card:hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.result-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-gradient);
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.result-content h4 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.result-amount {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Savings Tips */
+.savings-tips {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.tips-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.tips-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.tip-card {
+    background: rgba(255,255,255,0.8);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.tip-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-gradient);
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.tip-content h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.tip-content p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid rgba(255,255,255,0.2);
+    animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-close {
+    border: none;
+    background: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-cancel {
+    background: rgba(255,255,255,0.8);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: var(--border-color);
+}
+
+.btn-save {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.goal-card,
+.stat-card,
+.tip-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .calculator-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .goals-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tips-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    #sidebar-container {
+        width: 100%;
+        position: relative;
+        height: auto;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .goals-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .goals-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .goal-card,
+    .stat-card,
+    .tip-card {
+        padding: 1.5rem;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+}
+</style>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar (Cố định) -->
+        <div id="sidebar-container"></div>
+
+        <!-- Main Content (Cuộn được) -->
+        <main class="main-content">
+            <!-- Savings Content -->
+            <section class="savings-section">
+                <!-- Savings Overview -->
+                <div class="savings-overview">
+                    <h2><i class="fas fa-piggy-bank"></i> Mục Tiêu Tiết Kiệm</h2>
+                    <div class="overview-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Tổng Tiết Kiệm</h3>
+                                <p class="stat-amount">150.000.000 VNĐ</p>
+                                <span class="stat-label">Từ 5 mục tiêu</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-target"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Mục Tiêu Hoàn Thành</h3>
+                                <p class="stat-amount">2/5</p>
+                                <span class="stat-label">40% hoàn thành</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>Tỷ Lệ Tiết Kiệm</h3>
+                                <p class="stat-amount">47.1%</p>
+                                <span class="stat-label">Thu nhập hàng tháng</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Savings Goals -->
+                <div class="savings-goals">
+                    <div class="goals-header">
+                        <h3><i class="fas fa-bullseye"></i> Mục Tiêu Của Tôi</h3>
+                        <button class="btn-add-goal" id="add-goal-btn">
+                            <i class="fas fa-plus"></i> Thêm Mục Tiêu
+                        </button>
+                    </div>
+                    
+                    <div class="goals-grid">
+                        <!-- Goal 1: Emergency Fund -->
+                        <div class="goal-card completed">
+                            <div class="goal-header">
+                                <div class="goal-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="goal-info">
+                                    <h4>🛡️ Quỹ Khẩn Cấp</h4>
+                                    <p class="goal-description">Tiết kiệm cho các trường hợp khẩn cấp</p>
+                                </div>
+                                <div class="goal-status">
+                                    <span class="status-badge completed">✅ Hoàn thành</span>
+                                </div>
+                            </div>
+                            <div class="goal-progress">
+                                <div class="progress-info">
+                                    <span class="current-amount">30.000.000 VNĐ</span>
+                                    <span class="target-amount">/ 30.000.000 VNĐ</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                                <div class="progress-percentage">100%</div>
+                            </div>
+                            <div class="goal-timeline">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Hoàn thành: 15/11/2024</span>
+                            </div>
+                        </div>
+
+                        <!-- Goal 2: Vacation -->
+                        <div class="goal-card in-progress">
+                            <div class="goal-header">
+                                <div class="goal-icon">
+                                    <i class="fas fa-plane"></i>
+                                </div>
+                                <div class="goal-info">
+                                    <h4>✈️ Du Lịch Châu Âu</h4>
+                                    <p class="goal-description">Tiết kiệm cho chuyến du lịch 2 tuần</p>
+                                </div>
+                                <div class="goal-status">
+                                    <span class="status-badge in-progress">🚀 Đang thực hiện</span>
+                                </div>
+                            </div>
+                            <div class="goal-progress">
+                                <div class="progress-info">
+                                    <span class="current-amount">45.000.000 VNĐ</span>
+                                    <span class="target-amount">/ 80.000.000 VNĐ</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 56.25%"></div>
+                                </div>
+                                <div class="progress-percentage">56.25%</div>
+                            </div>
+                            <div class="goal-timeline">
+                                <i class="fas fa-calendar"></i>
+                                <span>Mục tiêu: 15/06/2025</span>
+                            </div>
+                            <div class="goal-actions">
+                                <button class="btn-add-money">
+                                    <i class="fas fa-plus"></i> 💰 Thêm tiền
+                                </button>
+                                <button class="btn-edit-goal">
+                                    <i class="fas fa-edit"></i> ✏️ Chỉnh sửa
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Goal 3: Car -->
+                        <div class="goal-card in-progress">
+                            <div class="goal-header">
+                                <div class="goal-icon">
+                                    <i class="fas fa-car"></i>
+                                </div>
+                                <div class="goal-info">
+                                    <h4>🚗 Mua Xe Mới</h4>
+                                    <p class="goal-description">Tiết kiệm để mua xe hơi</p>
+                                </div>
+                                <div class="goal-status">
+                                    <span class="status-badge in-progress">🚀 Đang thực hiện</span>
+                                </div>
+                            </div>
+                            <div class="goal-progress">
+                                <div class="progress-info">
+                                    <span class="current-amount">25.000.000 VNĐ</span>
+                                    <span class="target-amount">/ 500.000.000 VNĐ</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 5%"></div>
+                                </div>
+                                <div class="progress-percentage">5%</div>
+                            </div>
+                            <div class="goal-timeline">
+                                <i class="fas fa-calendar"></i>
+                                <span>Mục tiêu: 31/12/2026</span>
+                            </div>
+                            <div class="goal-actions">
+                                <button class="btn-add-money">
+                                    <i class="fas fa-plus"></i> 💰 Thêm tiền
+                                </button>
+                                <button class="btn-edit-goal">
+                                    <i class="fas fa-edit"></i> ✏️ Chỉnh sửa
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Goal 4: House -->
+                        <div class="goal-card in-progress">
+                            <div class="goal-header">
+                                <div class="goal-icon">
+                                    <i class="fas fa-home"></i>
+                                </div>
+                                <div class="goal-info">
+                                    <h4>🏠 Mua Nhà</h4>
+                                    <p class="goal-description">Tiết kiệm để mua nhà riêng</p>
+                                </div>
+                                <div class="goal-status">
+                                    <span class="status-badge in-progress">🚀 Đang thực hiện</span>
+                                </div>
+                            </div>
+                            <div class="goal-progress">
+                                <div class="progress-info">
+                                    <span class="current-amount">50.000.000 VNĐ</span>
+                                    <span class="target-amount">/ 2.000.000.000 VNĐ</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 2.5%"></div>
+                                </div>
+                                <div class="progress-percentage">2.5%</div>
+                            </div>
+                            <div class="goal-timeline">
+                                <i class="fas fa-calendar"></i>
+                                <span>Mục tiêu: 31/12/2030</span>
+                            </div>
+                            <div class="goal-actions">
+                                <button class="btn-add-money">
+                                    <i class="fas fa-plus"></i> 💰 Thêm tiền
+                                </button>
+                                <button class="btn-edit-goal">
+                                    <i class="fas fa-edit"></i> ✏️ Chỉnh sửa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Savings Calculator -->
+                <div class="savings-calculator">
+                    <div class="calculator-header">
+                        <h3><i class="fas fa-calculator"></i> Máy Tính Tiết Kiệm</h3>
+                        <p>Tính toán số tiền cần tiết kiệm để đạt mục tiêu</p>
+                    </div>
+                    <div class="calculator-content">
+                        <div class="calculator-form">
+                            <div class="form-group">
+                                <label for="target-amount">💰 Số tiền mục tiêu (VNĐ)</label>
+                                <input type="number" id="target-amount" placeholder="Nhập số tiền mục tiêu">
+                            </div>
+                            <div class="form-group">
+                                <label for="current-amount">💳 Số tiền hiện có (VNĐ)</label>
+                                <input type="number" id="current-amount" placeholder="Nhập số tiền hiện có">
+                            </div>
+                            <div class="form-group">
+                                <label for="timeframe">📅 Thời gian (tháng)</label>
+                                <input type="number" id="timeframe" placeholder="Nhập số tháng">
+                            </div>
+                            <div class="form-group">
+                                <label for="interest-rate">📈 Lãi suất (%/năm)</label>
+                                <input type="number" id="interest-rate" placeholder="Nhập lãi suất" value="6">
+                            </div>
+                            <button class="btn-calculate" id="calculate-btn">
+                                <i class="fas fa-calculator"></i> 🧮 Tính Toán
+                            </button>
+                        </div>
+                        <div class="calculator-results">
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-coins"></i>
+                                </div>
+                                <div class="result-content">
+                                    <h4>💰 Số tiền cần tiết kiệm mỗi tháng</h4>
+                                    <p class="result-amount" id="monthly-savings">0 VNĐ</p>
+                                </div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="result-content">
+                                    <h4>📊 Tổng lãi suất dự kiến</h4>
+                                    <p class="result-amount" id="total-interest">0 VNĐ</p>
+                                </div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <div class="result-content">
+                                    <h4>📈 Tỷ lệ hoàn thành</h4>
+                                    <p class="result-amount" id="completion-rate">0%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Savings Tips -->
+                <div class="savings-tips">
+                    <div class="tips-header">
+                        <h3><i class="fas fa-lightbulb"></i> Mẹo Tiết Kiệm</h3>
+                    </div>
+                    <div class="tips-grid">
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h4>📊 Quy tắc 50/30/20</h4>
+                                <p>Dành 50% thu nhập cho nhu cầu thiết yếu, 30% cho mong muốn, 20% cho tiết kiệm.</p>
+                            </div>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h4>🔄 Tiết kiệm tự động</h4>
+                                <p>Thiết lập chuyển tiền tự động vào tài khoản tiết kiệm mỗi tháng.</p>
+                            </div>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h4>📝 Theo dõi chi tiêu</h4>
+                                <p>Ghi chép và phân tích chi tiêu để tìm cơ hội tiết kiệm.</p>
+                            </div>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h4>🎯 Đặt mục tiêu cụ thể</h4>
+                                <p>Đặt mục tiêu tiết kiệm rõ ràng với thời gian và số tiền cụ thể.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Goal Modal -->
+    <div class="modal" id="add-goal-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus"></i> Thêm Mục Tiêu Mới</h3>
+                <button class="modal-close" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="add-goal-form">
+                    <div class="form-group">
+                        <label for="goal-name">📝 Tên mục tiêu</label>
+                        <input type="text" id="goal-name" placeholder="Nhập tên mục tiêu" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-description">📄 Mô tả</label>
+                        <textarea id="goal-description" placeholder="Mô tả mục tiêu" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-target">💰 Số tiền mục tiêu (VNĐ)</label>
+                        <input type="number" id="goal-target" placeholder="Nhập số tiền mục tiêu" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-current">💳 Số tiền hiện có (VNĐ)</label>
+                        <input type="number" id="goal-current" placeholder="Nhập số tiền hiện có" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-deadline">📅 Ngày hoàn thành</label>
+                        <input type="date" id="goal-deadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="goal-icon">🎨 Biểu tượng</label>
+                        <select id="goal-icon">
+                            <option value="fas fa-piggy-bank">🐷 Tiết kiệm</option>
+                            <option value="fas fa-home">🏠 Nhà cửa</option>
+                            <option value="fas fa-car">🚗 Xe cộ</option>
+                            <option value="fas fa-plane">✈️ Du lịch</option>
+                            <option value="fas fa-graduation-cap">🎓 Giáo dục</option>
+                            <option value="fas fa-heart">❤️ Sức khỏe</option>
+                            <option value="fas fa-shield-alt">🛡️ Khẩn cấp</option>
+                            <option value="fas fa-ring">💍 Cưới hỏi</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancel-goal">❌ Hủy</button>
+                <button class="btn-save" id="save-goal">💾 Lưu Mục Tiêu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Components -->
+    <script src="js/load-components.js"></script>
+    <script src="js/savings.js"></script>
+</body>
+
+</html>

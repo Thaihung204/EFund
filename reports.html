@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Tài Chính - FinanceApp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<style>
+/* Modern Reports Page Styles */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #ffd3a5 0%, #fd9853 100%);
+    min-height: 100vh;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+#sidebar-container {
+    width: 280px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(255,255,255,0.2);
+    padding: 2rem 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 2rem;
+    background: transparent;
+}
+
+
+/* Reports Section */
+.reports-section {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.time-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.time-selector h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.period-buttons {
+    display: flex;
+    background: rgba(255,255,255,0.8);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    gap: 0.25rem;
+}
+
+.period-btn {
+    border: none;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.period-btn.active {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+}
+
+.period-btn:hover:not(.active) {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--text-primary);
+}
+
+/* Summary Cards */
+.reports-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.summary-card:hover::before {
+    transform: scaleX(1);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    opacity: 0.9;
+}
+
+.card-icon i {
+    position: relative;
+    z-index: 1;
+}
+
+.card-icon.income {
+    background: var(--success-gradient);
+}
+
+.card-icon.expense {
+    background: var(--danger-gradient);
+}
+
+.card-icon.balance {
+    background: var(--primary-gradient);
+}
+
+.card-icon.savings {
+    background: var(--warning-gradient);
+}
+
+.card-content {
+    flex: 1;
+}
+
+.card-content h3 {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-content .amount {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.card-content .change {
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.change.positive {
+    color: #10b981;
+}
+
+.change.negative {
+    color: #ef4444;
+}
+
+/* Charts Section */
+.charts-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.chart-container {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+    box-shadow: var(--shadow-xl);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.chart-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chart-controls select {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: white;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.chart-controls select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Detailed Reports */
+.detailed-reports {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+.report-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.report-card:hover {
+    box-shadow: var(--shadow-xl);
+}
+
+.report-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.report-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.report-filters {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.report-filters select,
+.report-filters input {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    background: white;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.report-filters select:focus,
+.report-filters input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Transactions Table */
+.transactions-table {
+    overflow-x: auto;
+}
+
+.transactions-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.transactions-table th,
+.transactions-table td {
+    padding: 1rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.transactions-table th {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(102, 126, 234, 0.05);
+    position: sticky;
+    top: 0;
+}
+
+.transactions-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.transactions-table tbody tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+    transform: scale(1.01);
+}
+
+.transactions-table td {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.type-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.type-badge.income {
+    background: var(--success-gradient);
+}
+
+.type-badge.expense {
+    background: var(--danger-gradient);
+}
+
+.amount.income {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.amount.expense {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+/* Analysis Items */
+.analysis-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+}
+
+.analysis-item:hover {
+    background: rgba(102, 126, 234, 0.1);
+    transform: translateX(4px);
+}
+
+.analysis-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-gradient);
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.analysis-text h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.analysis-text p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .charts-section,
+    .detailed-reports {
+        grid-template-columns: 1fr;
+    }
+    
+    .reports-summary {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    #sidebar-container {
+        width: 100%;
+        position: relative;
+        height: auto;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .time-selector {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .period-buttons {
+        justify-content: center;
+    }
+    
+    .reports-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .summary-card {
+        padding: 1.5rem;
+    }
+    
+    .chart-container,
+    .report-card {
+        padding: 1.5rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.summary-card,
+.chart-container,
+.report-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.summary-card:nth-child(1) { animation-delay: 0.1s; }
+.summary-card:nth-child(2) { animation-delay: 0.2s; }
+.summary-card:nth-child(3) { animation-delay: 0.3s; }
+.summary-card:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar (Cố định) -->
+        <div id="sidebar-container"></div>
+
+        <!-- Main Content (Cuộn được) -->
+        <main class="main-content">
+            <!-- Reports Content -->
+            <section class="reports-section">
+                <!-- Time Period Selector -->
+                <div class="time-selector">
+                    <h2><i class="fas fa-chart-line"></i> Báo Cáo Tài Chính</h2>
+                    <div class="period-buttons">
+                        <button class="period-btn active" data-period="week">Tuần</button>
+                        <button class="period-btn" data-period="month">Tháng</button>
+                        <button class="period-btn" data-period="quarter">Quý</button>
+                        <button class="period-btn" data-period="year">Năm</button>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="reports-summary">
+                    <div class="summary-card">
+                        <div class="card-icon income">
+                            <i class="fas fa-arrow-trend-up"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Tổng Thu Nhập</h3>
+                            <p class="amount" id="total-income">15.500.000 VNĐ</p>
+                            <span class="change positive">
+                                <i class="fas fa-arrow-up"></i> +12.5%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon expense">
+                            <i class="fas fa-arrow-trend-down"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Tổng Chi Tiêu</h3>
+                            <p class="amount" id="total-expense">8.200.000 VNĐ</p>
+                            <span class="change negative">
+                                <i class="fas fa-arrow-down"></i> -5.2%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon balance">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Số Dư Ròng</h3>
+                            <p class="amount" id="net-balance">7.300.000 VNĐ</p>
+                            <span class="change positive">
+                                <i class="fas fa-arrow-up"></i> +18.7%
+                            </span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon savings">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Tỷ Lệ Tiết Kiệm</h3>
+                            <p class="amount" id="savings-rate">47.1%</p>
+                            <span class="change positive">
+                                <i class="fas fa-arrow-up"></i> +3.2%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-pie"></i> Phân Bổ Chi Tiêu</h3>
+                            <div class="chart-controls">
+                                <select id="expense-category-filter">
+                                    <option value="all">Tất cả danh mục</option>
+                                    <option value="food">🍽️ Ăn uống</option>
+                                    <option value="transport">🚗 Giao thông</option>
+                                    <option value="entertainment">🎬 Giải trí</option>
+                                    <option value="shopping">🛍️ Mua sắm</option>
+                                    <option value="bills">📄 Hóa đơn</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper" style="height: 300px;">
+                            <canvas id="expense-pie-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-line"></i> Xu Hướng Thu Chi</h3>
+                            <div class="chart-controls">
+                                <button class="chart-type-btn active" data-type="line">📈 Đường</button>
+                                <button class="chart-type-btn" data-type="bar">📊 Cột</button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper" style="height: 300px;">
+                            <canvas id="trend-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Reports -->
+                <div class="detailed-reports">
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3><i class="fas fa-receipt"></i> Chi Tiết Giao Dịch</h3>
+                            <div class="report-filters">
+                                <select id="transaction-type">
+                                    <option value="all">Tất cả</option>
+                                    <option value="income">💰 Thu nhập</option>
+                                    <option value="expense">💸 Chi tiêu</option>
+                                </select>
+                                <input type="date" id="date-from" placeholder="Từ ngày">
+                                <input type="date" id="date-to" placeholder="Đến ngày">
+                            </div>
+                        </div>
+                        <div class="transactions-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>📅 Ngày</th>
+                                        <th>📝 Mô tả</th>
+                                        <th>🏷️ Danh mục</th>
+                                        <th>🏷️ Loại</th>
+                                        <th>💰 Số tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactions-list">
+                                    <tr>
+                                        <td>15/12/2024</td>
+                                        <td>Lương tháng 12</td>
+                                        <td>Thu nhập</td>
+                                        <td><span class="type-badge income">Thu</span></td>
+                                        <td class="amount income">+15.000.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>14/12/2024</td>
+                                        <td>Ăn trưa</td>
+                                        <td>Ăn uống</td>
+                                        <td><span class="type-badge expense">Chi</span></td>
+                                        <td class="amount expense">-85.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>13/12/2024</td>
+                                        <td>Xăng xe</td>
+                                        <td>Giao thông</td>
+                                        <td><span class="type-badge expense">Chi</span></td>
+                                        <td class="amount expense">-200.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>12/12/2024</td>
+                                        <td>Mua sắm online</td>
+                                        <td>Mua sắm</td>
+                                        <td><span class="type-badge expense">Chi</span></td>
+                                        <td class="amount expense">-1.500.000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>11/12/2024</td>
+                                        <td>Tiền thưởng</td>
+                                        <td>Thu nhập</td>
+                                        <td><span class="type-badge income">Thu</span></td>
+                                        <td class="amount income">+500.000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3><i class="fas fa-brain"></i> Phân Tích Xu Hướng</h3>
+                        </div>
+                        <div class="analysis-content">
+                            <div class="analysis-item">
+                                <div class="analysis-icon">
+                                    <i class="fas fa-trending-up"></i>
+                                </div>
+                                <div class="analysis-text">
+                                    <h4>📈 Thu nhập tăng trưởng</h4>
+                                    <p>Thu nhập của bạn đã tăng 12.5% so với kỳ trước, chủ yếu nhờ tiền thưởng và tăng lương.</p>
+                                </div>
+                            </div>
+                            <div class="analysis-item">
+                                <div class="analysis-icon">
+                                    <i class="fas fa-trending-down"></i>
+                                </div>
+                                <div class="analysis-text">
+                                    <h4>📉 Chi tiêu được kiểm soát</h4>
+                                    <p>Chi tiêu giảm 5.2% so với kỳ trước, đặc biệt là chi phí ăn uống và giải trí.</p>
+                                </div>
+                            </div>
+                            <div class="analysis-item">
+                                <div class="analysis-icon">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <div class="analysis-text">
+                                    <h4>💡 Gợi ý tối ưu</h4>
+                                    <p>Bạn có thể tăng tỷ lệ tiết kiệm bằng cách giảm chi tiêu cho mua sắm và tăng đầu tư.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Load Components -->
+    <script src="js/load-components.js"></script>
+    <script src="js/reports.js"></script>
+</body>
+
+</html>
